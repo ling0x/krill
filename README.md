@@ -1,4 +1,4 @@
-# Krill
+# Krill 🦐
 
 A minimal statically-typed actor-based language for AI agents, compiled to bytecode and executed on a Rust runtime.
 
@@ -13,6 +13,7 @@ A minimal statically-typed actor-based language for AI agents, compiled to bytec
 ## Quick Start
 
 ### Prerequisites
+
 - Rust 1.75+ and Cargo
 
 ### Install & Run
