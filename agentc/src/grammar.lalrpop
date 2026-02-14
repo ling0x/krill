@@ -1,0 +1,96 @@
+// LALRPOP parser grammar
+use crate::ast::*;
+
+grammar;
+
+pub Program: Program = {
+    <types:TypeDef*> <agents:AgentDef+> => Program { types, agents }
+};
+
+TypeDef: TypeDef = {
+    "type" <name:Ident> "{" <variants:Comma<Variant>> "}" => TypeDef { name, variants }
+};
+
+Variant: Variant = {
+    <name:Ident> "{" <fields:Comma<Field>> "}" => Variant { name, fields }
+};
+
+Field: Field = {
+    <name:Ident> ":" <ty:Type> => Field { name, ty }
+};
+
+Type: Type = {
+    "Int" => Type::Int,
+    "String" => Type::String,
+    "Bool" => Type::Bool,
+    "Ref" "[" <Ident> "]" => Type::Ref(<>),
+    <Ident> => Type::Named(<>),
+};
+
+AgentDef: AgentDef = {
+    "agent" <name:Ident> "{" 
+        "state" "{" <state:StateVar*> "}"
+        <handlers:Handler+>
+    "}" => AgentDef { name, state, handlers }
+};
+
+StateVar: StateVar = {
+    <name:Ident> ":" <ty:Type> "=" <init:Expr> ";" => StateVar { name, ty, init }
+};
+
+Handler: Handler = {
+    "on" <variant:Ident> "{" <params:Comma<Ident>> "}" "->" "{" <body:Stmt*> "}" 
+        => Handler { variant, params, body }
+};
+
+Stmt: Stmt = {
+    <target:Ident> "=" <value:Expr> ";" => Stmt::Assign { target, value },
+    "send" <target:Expr> <msg_variant:Ident> "{" <args:Comma<Expr>> "}" ";" 
+        => Stmt::Send { target, msg_variant, args },
+    <name:Ident> "(" <args:Comma<Expr>> ")" ";" => Stmt::Effect { name, args },
+};
+
+Expr: Expr = {
+    <l:Expr> "+" <r:Factor> => Expr::BinOp { op: BinOp::Add, left: Box::new(l), right: Box::new(r) },
+    <l:Expr> "-" <r:Factor> => Expr::BinOp { op: BinOp::Sub, left: Box::new(l), right: Box::new(r) },
+    Factor,
+};
+
+Factor: Expr = {
+    <l:Factor> "*" <r:Term> => Expr::BinOp { op: BinOp::Mul, left: Box::new(l), right: Box::new(r) },
+    <l:Factor> "/" <r:Term> => Expr::BinOp { op: BinOp::Div, left: Box::new(l), right: Box::new(r) },
+    Term,
+};
+
+Term: Expr = {
+    <obj:Term> "." <field:Ident> => Expr::FieldAccess { obj: Box::new(obj), field },
+    <Num> => Expr::Int(<>),
+    <Str> => Expr::Str(<>),
+    "true" => Expr::Bool(true),
+    "false" => Expr::Bool(false),
+    <Ident> => Expr::Var(<>),
+    "(" <Expr> ")",
+};
+
+Comma<T>: Vec<T> = {
+    <mut v:(<T> ",")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
+
+Ident: String = r"[a-zA-Z_][a-zA-Z0-9_]*" => <>.to_string();
+Num: i64 = r"[0-9]+" => <>.parse().unwrap();
+Str: String = r#""[^"]*""# => {
+    let s = <>;
+    s[1..s.len()-1].to_string()
+};
+
+match {
+    r"\s*" => { },
+    r"//[^\n\r]*[\n\r]*" => { },
+    _
+}

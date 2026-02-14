@@ -1,0 +1,14 @@
+[package]
+name = "agentc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+agentr = { path = "../agentr" }
+lalrpop-util = { version = "0.20", features = ["lexer"] }
+serde = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+
+[build-dependencies]
+lalrpop = "0.20"

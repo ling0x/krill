@@ -1,0 +1,22 @@
+// Example agent program (ticket_system.agent)
+// This demonstrates the language syntax
+
+type TicketMsg {
+  NewTicket { id: Int, priority: String },
+  GetStatus { }
+}
+
+agent TicketHandler {
+  state {
+    count: Int = 0;
+  }
+  
+  on NewTicket { id, priority } -> {
+    state.count = state.count + 1;
+    log("Processing ticket", id, priority);
+  }
+  
+  on GetStatus { } -> {
+    log("Total tickets", state.count);
+  }
+}
