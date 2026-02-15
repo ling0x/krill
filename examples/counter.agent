@@ -1,0 +1,23 @@
+type CounterMsg {
+  Inc { by: Int, replyTo: Ref[CounterResp] }
+  Get { replyTo: Ref[CounterResp] }
+}
+
+type CounterResp {
+  Value { n: Int }
+}
+
+agent Counter {
+  state {
+    n: Int = 0
+  }
+
+  on Inc { by, replyTo } -> {
+    state.n = state.n + by;
+    send replyTo Value { n: state.n };
+  }
+
+  on Get { replyTo } -> {
+    send replyTo Value { n: state.n };
+  }
+}

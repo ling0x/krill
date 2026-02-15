@@ -1,0 +1,13 @@
+type EchoMsg {
+  Ping { text: String, replyTo: Ref[EchoResp] }
+}
+
+type EchoResp {
+  Pong { text: String }
+}
+
+agent Echo {
+  on Ping { text, replyTo } -> {
+    send replyTo Pong { text: text };
+  }
+}

@@ -26,7 +26,7 @@ cd krill
 # Build
 cargo build --release
 
-# Run example
+# Run Rust runtime example
 cargo run --example hello
 ```
 
@@ -67,32 +67,15 @@ agent TicketHandler {
 }
 ```
 
-## Architecture
+## Examples
 
-```
-┌─────────────────────────────────────────┐
-│         agentc (Compiler)               │
-│  ┌──────────┐  ┌──────────┐  ┌───────┐ │
-│  │ Parser   │→ │  Type    │→ │ Code  │ │
-│  │ (LALRPOP)│  │ Checker  │  │ Gen   │ │
-│  └──────────┘  └──────────┘  └───────┘ │
-└─────────────────────────────────────────┘
-                    ↓
-              Bytecode IR
-                    ↓
-┌─────────────────────────────────────────┐
-│        agentr (Runtime)                 │
-│  ┌──────────┐  ┌──────────┐  ┌───────┐ │
-│  │ Tokio    │  │ Actor    │  │Effect │ │
-│  │ Scheduler│  │ Mailboxes│  │System │ │
-│  └──────────┘  └──────────┘  └───────┘ │
-└─────────────────────────────────────────┘
-```
+- Language-level `.agent` examples live in `examples/`.
+- Rust runtime embedding/examples live in `agentr/examples/`.
 
 ## Project Structure
 
 ```
-agentlang/
+krill/
 ├── Cargo.toml              # Workspace manifest
 ├── agentr/                 # Runtime crate
 │   ├── Cargo.toml
@@ -111,14 +94,8 @@ agentlang/
 │       ├── typechecker.rs  # Type checking
 │       ├── bytecode.rs     # Bytecode IR
 │       └── interpreter.rs  # Bytecode executor
-└── examples/
-    ├── hello.rs            # Simple example
-    └── ticket_system.agent # Agent source code
+└── examples/               # Krill language examples (.agent)
 ```
-
-## Examples
-
-See `examples/` directory for complete examples.
 
 ## Roadmap
 

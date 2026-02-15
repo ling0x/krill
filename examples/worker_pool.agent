@@ -1,0 +1,28 @@
+type WorkMsg {
+  Work { id: Int, replyTo: Ref[WorkResp] }
+}
+
+type WorkResp {
+  Done { id: Int }
+}
+
+type PoolMsg {
+  Submit { id: Int, replyTo: Ref[WorkResp] }
+}
+
+agent Worker {
+  on Work { id, replyTo } -> {
+    // Placeholder for effectful work (http/log/etc.)
+    send replyTo Done { id: id };
+  }
+}
+
+agent Pool {
+  // This is a language-level sketch of a fan-out pattern.
+  // Runtime wiring / spawning multiple workers will be covered by Rust examples in `agentr/examples/`.
+  on Submit { id, replyTo } -> {
+    // In a future syntax revision, this becomes: `spawn Worker` and round-robin dispatch.
+    // For now, we just complete immediately.
+    send replyTo Done { id: id };
+  }
+}
