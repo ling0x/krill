@@ -1,0 +1,9 @@
+agent Minimal {
+  state {
+    tickets: Int = 0;
+  }
+
+  on Foo {} -> {
+    tickets = tickets + 1;
+  }
+}
