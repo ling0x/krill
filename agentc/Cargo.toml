@@ -12,3 +12,7 @@ tokio = { workspace = true }
 
 [build-dependencies]
 lalrpop = "0.20"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+insta = "1.39"

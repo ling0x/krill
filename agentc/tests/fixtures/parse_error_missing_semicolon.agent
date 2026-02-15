@@ -1,0 +1,8 @@
+agent BadParse {
+  state {
+    tickets: Int = 0
+  }
+
+  on Foo {} -> {
+  }
+}

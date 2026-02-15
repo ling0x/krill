@@ -1,0 +1,8 @@
+agent BadType {
+  state {
+  }
+
+  on Foo {} -> {
+    x = 1;
+  }
+}
